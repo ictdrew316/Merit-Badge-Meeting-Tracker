@@ -1,0 +1,580 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Merit Badge Sign-Off Log</title>
+<style>
+:root{
+  --bg:#EFEFEF;--surface:#fff;--surface-2:#F5F5F5;--border:#DDD;--ink:#2B2B2B;--ink-2:#666;--ink-3:#999;
+  --red:#C8102E;--red-dark:#A50D26;--blue:#0B5FA5;--blue-soft:#EAF2FA;--blue-border:#C6DEF2;
+  --gold:#F6E0AE;--gold-border:#E0BE6E;--gold-ink:#7A5A10;--green:#1E7B3A;--green-soft:#E3F4E8;--green-border:#A9D9B6;
+  --alert-soft:#FBE1DE;--alert-border:#E9B3AC;--alert-ink:#A5301B;--shadow:0 1px 2px rgba(0,0,0,.05),0 4px 14px -8px rgba(0,0,0,.18);
+}
+@media (prefers-color-scheme:dark){:root{
+  --bg:#17181A;--surface:#202225;--surface-2:#26282B;--border:#3A3C40;--ink:#ECECEC;--ink-2:#AEAEAE;--ink-3:#7C7C7C;
+  --red:#DC2F4E;--red-dark:#C8102E;--blue:#5FADEB;--blue-soft:#1C2C3B;--blue-border:#2C4A64;
+  --gold:#4A3B14;--gold-border:#6B5620;--gold-ink:#F0D48A;--green:#5CCB82;--green-soft:#17301F;--green-border:#2C5A3A;
+  --alert-soft:#3A2320;--alert-border:#6B3A32;--alert-ink:#F0A090;--shadow:0 1px 2px rgba(0,0,0,.35),0 10px 26px -12px rgba(0,0,0,.55);}}
+*{box-sizing:border-box}
+html{font-size:16px}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.45}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px}
+header.top{background:var(--red);color:#fff;padding:16px 0}
+.wrap{max-width:980px;margin:0 auto;padding:0 16px}
+header.top .wrap{display:flex;flex-wrap:wrap;gap:8px 20px;align-items:center;justify-content:space-between}
+header.top h1{margin:0;font-size:1.3rem}
+header.top .sub{font-size:.82rem;opacity:.92}
+#sync{font-size:.78rem;background:rgba(255,255,255,.18);border-radius:999px;padding:4px 12px}
+.tabs{display:flex;gap:2px;border-bottom:1px solid var(--border);margin:16px 0}
+.tabs button{background:none;border:0;border-bottom:3px solid transparent;padding:10px 14px;font-weight:700;color:var(--ink-2);cursor:pointer;margin-bottom:-1px}
+.tabs button.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tabs .count{display:inline-block;min-width:20px;padding:0 6px;border-radius:999px;background:var(--red);color:#fff;font-size:.72rem;margin-left:4px;text-align:center}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:12px;box-shadow:var(--shadow);padding:14px 16px;margin-bottom:12px}
+label.f{display:block;font-size:.78rem;font-weight:700;color:var(--ink-2);margin-bottom:4px;text-transform:uppercase;letter-spacing:.03em}
+select,input[type=text],input[type=date],input[type=password],input[type=search],textarea{width:100%;padding:9px 11px;border:1px solid var(--border);border-radius:8px;background:var(--surface);font-size:1rem}
+.row{display:grid;gap:12px;grid-template-columns:1fr 1fr}
+@media(max-width:620px){.row{grid-template-columns:1fr}}
+.btn{border:0;border-radius:8px;padding:9px 14px;font-weight:700;cursor:pointer;background:var(--blue);color:#fff}
+.btn.sec{background:var(--surface);color:var(--blue);border:1.5px solid var(--blue)}
+.btn.red{background:var(--red)}
+.btn.small{padding:5px 10px;font-size:.82rem}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.muted{color:var(--ink-2);font-size:.85rem}
+.hint{font-size:.82rem;color:var(--ink-2);margin:6px 0 0}
+.banner{border-radius:10px;padding:10px 14px;margin-bottom:12px;font-size:.9rem}
+.banner.warn{background:var(--alert-soft);border:1px solid var(--alert-border);color:var(--alert-ink)}
+.banner.info{background:var(--blue-soft);border:1px solid var(--blue-border)}
+/* requirement list */
+.req{display:flex;gap:10px;align-items:flex-start;padding:9px 10px;border-bottom:1px solid var(--border);background:var(--surface)}
+.req:last-child{border-bottom:0}
+.req.head{background:var(--surface-2)}
+.req.head .txt{font-weight:600}
+.req input[type=checkbox]{width:22px;height:22px;margin-top:2px;flex:none;accent-color:var(--blue)}
+.req .key{flex:none;min-width:42px;text-align:center;font-weight:700;font-size:.8rem;background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-border);border-radius:6px;padding:2px 6px;margin-top:1px;white-space:nowrap}
+.req .txt{flex:1;font-size:.93rem;min-width:0;overflow-wrap:anywhere}
+.req.chosen{background:var(--gold)}
+.req.pending{background:var(--surface-2)}
+.req.done{background:var(--green-soft)}
+.tag{flex:none;font-size:.7rem;font-weight:700;border-radius:999px;padding:2px 9px;white-space:nowrap}
+.tag.pend{background:var(--gold);color:var(--gold-ink);border:1px solid var(--gold-border)}
+.tag.ent{background:var(--green-soft);color:var(--green);border:1px solid var(--green-border)}
+.reqs{border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.bar{position:sticky;bottom:0;background:var(--surface);border-top:2px solid var(--blue);padding:12px 16px;margin:12px -16px -0px;box-shadow:0 -6px 18px -10px rgba(0,0,0,.3);z-index:5}
+.bar .row3{display:grid;grid-template-columns:150px 1fr 1fr auto;gap:10px;align-items:end}
+@media(max-width:760px){.bar .row3{grid-template-columns:1fr 1fr}.bar .row3 .btn{grid-column:1/-1}}
+.seg{display:inline-flex;border:1px solid var(--blue-border);border-radius:999px;overflow:hidden}
+.seg button{background:none;border:0;padding:7px 14px;font-weight:600;color:var(--blue);cursor:pointer}
+.seg button.active{background:var(--blue);color:#fff}
+.grp h3{margin:0;font-size:1rem}
+.grp .gh{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:8px}
+.qrow{display:flex;gap:10px;align-items:flex-start;padding:8px 0;border-top:1px solid var(--border)}
+.qrow .meta{font-size:.74rem;color:var(--ink-3)}
+.qrow .grow{flex:1;min-width:0}
+.qrow .snip{font-size:.88rem;overflow-wrap:anywhere}
+.qrow.entered .snip{color:var(--ink-3);text-decoration:line-through}
+.x{background:none;border:0;color:var(--ink-3);cursor:pointer;font-size:1.1rem;padding:2px 6px}
+.toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:12px}
+.toolbar .sp{flex:1}
+table.rost{width:100%;border-collapse:collapse;font-size:.9rem}
+table.rost td{padding:6px 4px;border-top:1px solid var(--border)}
+.toast{position:fixed;left:50%;bottom:90px;transform:translateX(-50%);background:#222;color:#fff;padding:10px 16px;border-radius:8px;font-size:.9rem;z-index:50;max-width:90vw}
+[hidden]{display:none!important}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chipgrp{flex-basis:100%;font-size:.74rem;font-weight:700;color:var(--ink-2);text-transform:uppercase;letter-spacing:.04em;margin-top:4px}
+.chip{border:1.5px solid var(--border);background:var(--surface);border-radius:999px;padding:8px 14px;font-weight:600;cursor:pointer;min-height:40px}
+.chip.on{background:var(--blue);border-color:var(--blue);color:#fff}
+.chip .cn{margin-left:8px;font-size:.72rem;background:var(--gold);color:var(--gold-ink);border-radius:999px;padding:0 7px}
+.chip.on .cn{background:rgba(255,255,255,.25);color:#fff}
+.gridwrap{overflow:auto;border:1px solid var(--border);border-radius:12px;background:var(--surface);box-shadow:var(--shadow);max-height:70vh}
+table.grid{border-collapse:separate;border-spacing:0;width:100%}
+table.grid th,table.grid td{border-bottom:1px solid var(--border);padding:0}
+table.grid thead th{position:sticky;top:0;background:var(--surface-2);z-index:3;font-size:.78rem;text-align:center;padding:8px 6px;border-bottom:2px solid var(--border)}
+table.grid thead th.sc{min-width:74px;width:74px;max-width:74px}
+table.grid th.lead,table.grid td.lead{position:sticky;left:0;background:var(--surface);z-index:2;min-width:min(52vw,420px);max-width:min(52vw,420px);text-align:left;border-right:2px solid var(--border)}
+table.grid thead th.lead{z-index:4;background:var(--surface-2)}
+table.grid .lt{padding:8px 10px;font-size:.88rem;overflow-wrap:anywhere}
+table.grid td.c{text-align:center;vertical-align:middle;height:44px}
+tr.hrow td.lead{background:var(--surface-2);font-weight:600}
+tr.hrow td.c{background:var(--surface-2)}
+tr.opt td.lead,tr.opt td.c{box-shadow:inset 4px 0 0 #E8890C}
+tr.opt td.c{box-shadow:none}
+tr.pickrow td.lead{background:var(--gold)!important;color:var(--gold-ink)}
+tr.pickrow td.c{background:var(--gold)!important}
+table.grid .key{display:inline-block;min-width:34px;text-align:center;font-weight:700;font-size:.74rem;background:var(--blue-soft);color:var(--blue);border:1px solid var(--blue-border);border-radius:6px;padding:1px 5px;margin-right:4px;vertical-align:1px}
+table.grid input.cb{width:24px;height:24px;accent-color:var(--blue);cursor:pointer}
+.rowall{display:inline-block;margin-right:6px;vertical-align:middle}.rowall input{width:16px;height:16px;accent-color:var(--blue)}
+.tag.pick{background:#E8890C;color:#fff;border:0;margin-left:4px}
+.tag.allt{background:var(--surface);color:var(--ink-2);border:1px solid var(--border);margin-left:4px}
+.cellmini{display:inline-block;min-width:34px;font-size:.74rem;font-weight:700;border-radius:999px;padding:2px 8px}
+.cellmini.ok{background:var(--green-soft);color:var(--green);border:1px solid var(--green-border)}
+.cellmini.pend{background:var(--alert-soft);color:var(--alert-ink);border:1px solid var(--alert-border)}
+.cellmini.logged{background:var(--gold);color:var(--gold-ink);border:1px solid var(--gold-border)}
+.cellmini.subm{background:var(--blue-soft);color:var(--blue);border:1px dashed var(--blue)}
+.cellmini.ent{background:var(--green-soft);color:var(--green);border:1px solid var(--green-border)}
+.legend{display:flex;flex-wrap:wrap;gap:8px 18px;font-size:.8rem;color:var(--ink-2);align-items:center}
+.sw.opt{display:inline-block;width:14px;height:14px;border-left:4px solid #E8890C;background:var(--surface-2);vertical-align:-2px}
+</style>
+</head>
+<body>
+<header class="top"><div class="wrap">
+  <div><h1>Merit Badge Sign-Off Log</h1><div class="sub">Troop 533 &amp; 1533 &middot; record what was signed off at meetings, then enter it in Scoutbook</div></div>
+  <div id="sync">Loading&hellip;</div>
+</div></header>
+<div class="wrap">
+  <div class="tabs" id="tabs">
+    <button data-tab="sign" class="active">Sign off</button>
+    <button data-tab="queue">Approvals &amp; queue <span class="count" id="qcount" hidden>0</span></button>
+    <button data-tab="settings">Settings</button>
+  </div>
+  <div id="banner"></div>
+  <section id="tab-sign"></section>
+  <section id="tab-queue" hidden></section>
+  <section id="tab-settings" hidden></section>
+</div>
+<div class="toast" id="toast" hidden></div>
+
+<script>
+(function(){
+'use strict';
+var $=function(s,r){return (r||document).querySelector(s)};
+var esc=function(s){return String(s==null?'':s).replace(/[&<>"']/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})};
+function lsGet(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function lsSet(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function today(){var d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function fmtDate(s){if(!s)return '';var p=s.split('-');return p.length===3?(+p[1])+'/'+(+p[2])+'/'+p[0]:s}
+function toast(m){var t=$('#toast');t.textContent=m;t.hidden=false;clearTimeout(toast.t);toast.t=setTimeout(function(){t.hidden=true},2600)}
+
+// ---------- config ----------
+var guessOwner=location.hostname.endsWith('.github.io')?location.hostname.split('.')[0]:'';
+var guessRepo=location.hostname.endsWith('.github.io')?(location.pathname.split('/')[1]||''):'';
+var cfg=Object.assign({owner:guessOwner,repo:guessRepo,branch:'main',token:'',leader:''},lsGet('mbs_cfg',{}));
+function saveCfg(){lsSet('mbs_cfg',cfg)}
+
+// ---------- state ----------
+var REQ={};            // slug -> {name,items,notes}
+var base={scouts:[],records:[]}; // last known published
+var sha=null;
+var pending=lsGet('mbs_pending',[]);  // unsynced ops
+var ui={tab:'sign',badge:lsGet('mbs_badge',''),here:lsGet('mbs_here',{}),badgeFilter:'',addOpen:false,chosen:{},date:today(),note:'',qfilter:'approve',qsearch:''};
+var syncState='loading', syncMsg='';
+var me={login:'',name:''};
+function isAdmin(){var a=(base.admins||[]).map(function(x){return String(x).toLowerCase()});return !!me.login&&a.indexOf(me.login.toLowerCase())>-1}
+function adminsEmpty(){return !(base.admins&&base.admins.length)}
+function recStatus(r){return r.entered?'entered':(r.status==='submitted'?'submitted':'approved')}
+function qmatch(r){var st=recStatus(r);var f=ui.qfilter;return f==='all'||(f==='approve'&&st==='submitted')||(f==='waiting'&&st==='approved')||(f==='entered'&&st==='entered')}
+function needsApproval(d){return d.records.filter(function(r){return recStatus(r)==='submitted'}).length}
+
+// ---------- ops ----------
+function clone(o){return JSON.parse(JSON.stringify(o))}
+function applyOp(d,op){
+  if(op.t==='add'){var have={};d.records.forEach(function(r){have[r.id]=1});op.recs.forEach(function(r){if(!have[r.id]){d.records.push(r);have[r.id]=1}})}
+  else if(op.t==='ent'){var ids={};op.ids.forEach(function(i){ids[i]=1});d.records.forEach(function(r){if(ids[r.id]){r.entered=op.v;r.enteredAt=op.v?op.at:null}})}
+  else if(op.t==='del'){var di={};op.ids.forEach(function(i){di[i]=1});d.records=d.records.filter(function(r){return !di[r.id]})}
+  else if(op.t==='appr'){var ai={};op.ids.forEach(function(i){ai[i]=1});d.records.forEach(function(r){if(ai[r.id]&&r.status==='submitted'){r.status='approved';r.approvedBy=op.by;r.approvedAt=op.at}})}
+  else if(op.t==='admin+'){d.admins=d.admins||[];if(d.admins.map(function(x){return x.toLowerCase()}).indexOf(op.login.toLowerCase())<0)d.admins.push(op.login)}
+  else if(op.t==='scout+'){if(!d.scouts.some(function(s){return s.id===op.s.id||(s.name.toLowerCase()===op.s.name.toLowerCase()&&s.troop===op.s.troop)}))d.scouts.push(op.s)}
+  else if(op.t==='scout-'){d.scouts=d.scouts.filter(function(s){return s.id!==op.id})}
+  return d;
+}
+function view(){var d=clone(base);pending.forEach(function(o){applyOp(d,o)});return d}
+function queueOp(op){pending.push(op);lsSet('mbs_pending',pending);render();flush()}
+
+// ---------- GitHub I/O ----------
+function api(path,opts){
+  opts=opts||{};opts.headers=Object.assign({'Accept':'application/vnd.github+json','Authorization':'Bearer '+cfg.token,'X-GitHub-Api-Version':'2022-11-28'},opts.headers||{});
+  return fetch('https://api.github.com/repos/'+cfg.owner+'/'+cfg.repo+path,opts);
+}
+function b64dec(s){var bin=atob(s.replace(/\n/g,''));var u=new Uint8Array(bin.length);for(var i=0;i<bin.length;i++)u[i]=bin.charCodeAt(i);return new TextDecoder().decode(u)}
+function b64enc(str){var u=new TextEncoder().encode(str),bin='';for(var i=0;i<u.length;i+=8192)bin+=String.fromCharCode.apply(null,u.subarray(i,i+8192));return btoa(bin)}
+async function fetchRemote(){
+  if(cfg.token&&cfg.owner&&cfg.repo){
+    var r=await api('/contents/data/signoffs.json?ref='+encodeURIComponent(cfg.branch)+'&_='+Date.now());
+    if(r.status===401||r.status===403)throw new Error('Token rejected ('+r.status+'). Check Settings.');
+    if(!r.ok)throw new Error('GitHub says '+r.status);
+    var j=await r.json();sha=j.sha;return JSON.parse(b64dec(j.content));
+  }
+  var r2=await fetch('data/signoffs.json?_='+Date.now(),{cache:'no-store'});
+  if(!r2.ok)throw new Error('Could not load data/signoffs.json');
+  return r2.json();
+}
+async function load(){
+  syncState='loading';renderSync();
+  try{base=await fetchRemote();base.records=base.records||[];base.scouts=base.scouts||[];base.admins=base.admins||[];syncState=cfg.token?'ok':'readonly';
+    if(cfg.token&&!me.login){try{var ur=await fetch('https://api.github.com/user',{headers:{'Accept':'application/vnd.github+json','Authorization':'Bearer '+cfg.token}});if(ur.ok){var uj=await ur.json();me={login:uj.login||'',name:uj.name||''}}}catch(e2){}}}
+  catch(e){syncState='error';syncMsg=e.message}
+  renderSync();render();
+  if(pending.length)flush();
+}
+var flushing=false;
+async function flush(){
+  if(flushing||!pending.length||!cfg.token)return;
+  flushing=true;syncState='saving';renderSync();
+  try{
+    for(var attempt=0;attempt<4;attempt++){
+      var rr=await api('/contents/data/signoffs.json?ref='+encodeURIComponent(cfg.branch)+'&_='+Date.now());
+      if(!rr.ok)throw new Error('GitHub says '+rr.status+' while reading');
+      var j=await rr.json();var d=JSON.parse(b64dec(j.content));d.records=d.records||[];d.scouts=d.scouts||[];
+      var batch=pending.slice();batch.forEach(function(o){applyOp(d,o)});
+      d.updated=new Date().toISOString();
+      var body={message:'Sign-off log update ('+batch.length+' change'+(batch.length>1?'s':'')+')',content:b64enc(JSON.stringify(d,null,1)),sha:j.sha,branch:cfg.branch};
+      var pr=await api('/contents/data/signoffs.json',{method:'PUT',body:JSON.stringify(body)});
+      if(pr.ok){var pj=await pr.json();sha=pj.content.sha;base=d;pending=pending.slice(batch.length);lsSet('mbs_pending',pending);syncState='ok';syncMsg='';break}
+      if(pr.status===409||pr.status===422){continue}   // someone else saved first: re-read and retry
+      throw new Error('Save failed ('+pr.status+')');
+    }
+    if(syncState==='saving')throw new Error('Could not save after several tries');
+  }catch(e){syncState='error';syncMsg=e.message}
+  flushing=false;renderSync();render();
+  if(syncState==='ok'&&pending.length)flush();
+}
+function renderSync(){
+  var el=$('#sync'),t='';
+  if(syncState==='loading')t='Loading…';
+  else if(syncState==='saving')t='Saving…';
+  else if(syncState==='ok')t=pending.length?pending.length+' unsaved':'All saved';
+  else if(syncState==='readonly')t='View only (no token)';
+  else t='Sync problem'+(pending.length?' · '+pending.length+' unsaved':'');
+  el.textContent=t;el.title=syncMsg||'';
+  var b='';
+  if(syncState==='error')b='<div class="banner warn"><b>Not saved to GitHub yet.</b> '+esc(syncMsg)+' Your entries are kept on this device and will retry. <button class="btn small" data-act="retry">Retry now</button></div>';
+  else if(syncState==='readonly')b='<div class="banner info">You are viewing only. To record sign-offs, open <b>Settings</b> and enter your GitHub token once on this device.</div>';
+  $('#banner').innerHTML=b;
+}
+
+// ---------- helpers ----------
+function badgeList(){return Object.keys(REQ).map(function(s){return {slug:s,name:REQ[s].name}}).sort(function(a,b){return a.name.localeCompare(b.name)})}
+function recId(sc,bd,k){return sc+'|'+bd+'|'+k}
+function scoutName(d,id){var s=d.scouts.filter(function(x){return x.id===id})[0];return s?s.name:'(removed scout)'}
+function scoutTroop(d,id){var s=d.scouts.filter(function(x){return x.id===id})[0];return s?s.troop:''}
+function leavesUnder(items,i){var out=[],l=items[i].l;for(var j=i+1;j<items.length&&items[j].l>l;j++){if(items[j].k&&items[j].f)out.push(items[j].k)}return out}
+function waitingCount(d){return d.records.filter(function(r){return recStatus(r)==='approved'}).length}
+
+// ---------- SIGN-OFF TAB (meeting mode: badge first, then who is here, then grid) ----------
+var NUMW={one:1,two:2,three:3,four:4,five:5,six:6,seven:7,eight:8,nine:9,ten:10};
+function parseRule(t){
+  var m=/\b(one|two|three|four|five|six|seven|eight|nine|ten|all)\b(?:\s+\w+){0,2}?\s+of\s+the\s+following/i.exec(t||'');
+  if(!m)return null;var w=m[1].toLowerCase();
+  if(w==='all')return {all:true};
+  var n=NUMW[w]||parseInt(w,10);return n?{n:n}:null;
+}
+var analysisCache={};
+function analyze(slug){
+  if(analysisCache[slug])return analysisCache[slug];
+  var items=REQ[slug].items,groups={},stripe={};
+  items.forEach(function(it,i){
+    if(!it.k||it.f)return;
+    var rule=parseRule(it.t);if(!rule)return;
+    var l=it.l,members=[],seg=false,j;
+    for(j=i+1;j<items.length&&items[j].l>l;j++){if(items[j].k===null&&items[j].l===l+1){seg=true;break}}
+    if(seg){
+      var cur=null;
+      for(j=i+1;j<items.length&&items[j].l>l;j++){
+        if(items[j].k===null&&items[j].l===l+1){cur={keys:[],idx:[j]};members.push(cur)}
+        else if(cur){cur.idx.push(j);if(items[j].k&&items[j].f)cur.keys.push(items[j].k)}
+      }
+    }else{
+      for(j=i+1;j<items.length&&items[j].l>l;j++){
+        if(items[j].l===l+1&&items[j].k){var mk=items[j].f?[items[j].k]:leavesUnder(items,j);var mi=[j];for(var q=j+1;q<items.length&&items[q].l>items[j].l;q++)mi.push(q);members.push({keys:mk,idx:mi})}
+      }
+    }
+    members=members.filter(function(m){return m.keys.length});
+    if(!members.length)return;
+    var all=!!rule.all||rule.n>=members.length;
+    groups[i]={all:all,n:all?members.length:rule.n,M:members.length,members:members,top:l===0};
+    if(!all)members.forEach(function(m){m.idx.forEach(function(x){stripe[x]=1})});
+  });
+  return (analysisCache[slug]={groups:groups,stripe:stripe});
+}
+var EAGLE={'first-aid':1,'citizenship-in-the-community':1,'citizenship-in-the-nation':1,'citizenship-in-the-world':1,'communication':1,'cooking':1,'personal-fitness':1,'personal-management':1,'camping':1,'family-life':1,'emergency-preparedness':1,'lifesaving':1,'environmental-science':1,'sustainability':1,'swimming':1,'hiking':1,'cycling':1};
+function shortName(n){var p=n.trim().split(/\s+/);return p.length>1?p[0]+' '+p[p.length-1][0]+'.':n}
+function addScoutCard(){
+  if(!ui.addOpen)return '<div style="margin:-4px 0 12px"><button class="btn sec small" data-act="addopen">+ Add a scout who is not on the list</button></div>';
+  return '<div class="card" style="border-color:var(--blue)"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><b>Add a scout</b><button class="x" data-act="addclose" title="Close">&times;</button></div>'+
+   '<div class="row"><div><label class="f" for="addFirst">First name</label><input type="text" id="addFirst" autocomplete="off"></div><div><label class="f" for="addLast">Last name</label><input type="text" id="addLast" autocomplete="off"></div></div>'+
+   '<div class="row" style="margin-top:10px"><div><label class="f" for="addTroop">Troop</label><select id="addTroop"><option>533</option><option>1533</option></select></div><div><label class="f" for="addId">Scoutbook member ID (optional)</label><input type="text" id="addId" autocomplete="off" inputmode="numeric"></div></div>'+
+   '<p class="hint">New scouts are added for everyone and marked as here for this meeting.'+(cfg.token?'':' Add your token in Settings first.')+'</p>'+
+   '<div style="margin-top:10px;display:flex;gap:8px"><button class="btn" data-act="addsave"'+(cfg.token?'':' disabled')+'>Add scout</button><button class="btn sec" data-act="addclose">Cancel</button></div></div>';
+}
+function addScout(name,troop,id){
+  name=name.replace(/\s+/g,' ').trim();if(!name)return {err:'Enter a first and last name'};
+  var d=view();var dup=d.scouts.filter(function(s){return s.name.toLowerCase()===name.toLowerCase()&&s.troop===troop})[0];
+  if(dup)return {dup:dup};
+  id=(id||'').trim()||('x'+Date.now().toString(36));
+  if(d.scouts.some(function(s){return s.id===id}))return {err:'That Scoutbook ID is already used by '+scoutName(d,id)};
+  queueOp({t:'scout+',s:{id:id,name:name,troop:troop,addedBy:me.login||''}});
+  return {ok:{id:id,name:name}};
+}
+function renderSign(){
+  var d=view();var el=$('#tab-sign');
+  var sorted=d.scouts.slice().sort(function(a,b){return (a.troop===b.troop?0:(a.troop<b.troop?-1:1))||a.name.localeCompare(b.name)});
+  var bl=badgeList().filter(function(b){return !ui.badgeFilter||b.name.toLowerCase().indexOf(ui.badgeFilter.toLowerCase())>-1});
+  var badgeOpts='<option value="">Choose the merit badge for tonight…</option>'+bl.map(function(b){return '<option value="'+esc(b.slug)+'"'+(ui.badge===b.slug?' selected':'')+'>'+esc(b.name)+(EAGLE[b.slug]?' (Eagle-required)':'')+'</option>'}).join('');
+  var h='<div class="card"><label class="f" for="badgeFilter">1. Merit badge</label><div class="row"><input type="search" id="badgeFilter" placeholder="Type to narrow the list…" value="'+esc(ui.badgeFilter)+'"><select id="selBadge">'+badgeOpts+'</select></div></div>';
+  if(!ui.badge){h+='<div class="card muted">Choose the merit badge being worked on at this meeting. Then mark which scouts are here and check off requirements for each.</div>'+addScoutCard();el.innerHTML=h;return}
+  var B=REQ[ui.badge],A=analyze(ui.badge);
+  var recBy={};d.records.forEach(function(r){if(r.badge===ui.badge){(recBy[r.scoutId]=recBy[r.scoutId]||{})[r.key]=r}});
+  var leafKeys=B.items.filter(function(i){return i.k&&i.f}).map(function(i){return i.k});
+  // attendance
+  var here=sorted.filter(function(s){return ui.here[s.id]});
+  h+='<div class="card"><div style="display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between"><label class="f" style="margin:0">2. Scouts here working on '+esc(B.name)+' <span class="muted" style="text-transform:none;letter-spacing:0">('+here.length+' selected)</span></label><span><button class="btn sec small" data-act="here-working">Select scouts already started</button> <button class="btn sec small" data-act="here-clear">Clear</button></span></div><div class="chips" style="margin-top:10px">';
+  var lastT=null;
+  sorted.forEach(function(s){
+    if(s.troop!==lastT){h+='<div class="chipgrp">Troop '+esc(s.troop)+'</div>';lastT=s.troop}
+    var n=recBy[s.id]?Object.keys(recBy[s.id]).length:0;
+    h+='<button class="chip'+(ui.here[s.id]?' on':'')+'" data-act="here" data-id="'+esc(s.id)+'" aria-pressed="'+(ui.here[s.id]?'true':'false')+'">'+esc(s.name)+(n?'<span class="cn">'+n+'</span>':'')+'</button>';
+  });
+  h+='</div>'+addScoutCard()+'</div>';
+  if(!here.length){h+='<div class="card muted">Tap the scouts who are here. The requirement grid appears below.</div>';el.innerHTML=h;return}
+  // legend
+  h+='<div class="card" style="padding:10px 14px"><div class="legend"><span><span class="sw opt"></span> Choice: only some of these are needed</span><span><span class="tag pick">Pick 2 of 5</span> how many to complete</span><span><span class="tag allt">Do all</span> every part required</span><span><span class="cellmini ok">✓</span> group met</span><span><span class="cellmini pend">1/2</span> still needed</span><span><span class="cellmini subm">○</span> submitted, awaiting approval</span><span><span class="cellmini logged">●</span> approved</span><span><span class="cellmini ent">✓</span> in Scoutbook</span></div></div>';
+  // grid
+  var cols=here.length;
+  h+='<div class="gridwrap"><table class="grid"><thead><tr><th class="lead">Requirement</th>'+here.map(function(s){return '<th class="sc"><div>'+esc(shortName(s.name))+'</div></th>'}).join('')+'</tr></thead><tbody>';
+  function doneFor(sid,k){return !!((recBy[sid]&&recBy[sid][k])||(ui.chosen[sid]&&ui.chosen[sid][k]))}
+  B.items.forEach(function(it,i){
+    var g=A.groups[i],opt=A.stripe[i]?' opt':'';
+    if(it.k===null){
+      h+='<tr class="hrow'+opt+'"><td class="lead"><div class="lt" style="padding-left:'+(it.l*14)+'px">'+esc(it.t)+'</div></td>'+here.map(function(s){
+        // option header: show progress if it heads an option member of a group
+        return '<td class="c"></td>'}).join('')+'</tr>';
+      return;
+    }
+    var tags='';
+    if(g){tags=g.all?'<span class="tag allt">Do all'+(g.M>1?' '+g.M:'')+'</span>':'<span class="tag pick">Pick '+g.n+' of '+g.M+'</span>'}
+    var pad='padding-left:'+(it.l*14)+'px';
+    if(!it.f){
+      h+='<tr class="hrow'+opt+(g&&!g.all?' pickrow':'')+'"><td class="lead"><div class="lt" style="'+pad+'"><span class="key">'+esc(it.k)+'</span> '+esc(it.t)+' '+tags+'</div></td>'+here.map(function(s){
+        if(!g)return '<td class="c"></td>';
+        var got=g.members.filter(function(m){return m.keys.every(function(k){return doneFor(s.id,k)})}).length;
+        var ok=got>=g.n;
+        return '<td class="c"><span class="cellmini '+(ok?'ok':'pend')+'">'+(ok?'✓':got+'/'+g.n)+'</span></td>'}).join('')+'</tr>';
+      return;
+    }
+    h+='<tr class="lrow'+opt+'"><td class="lead"><div class="lt" style="'+pad+'"><label class="rowall" title="Check this requirement for everyone here"><input type="checkbox" data-rowall="'+esc(it.k)+'"'+(function(){var free=here.filter(function(s2){return !(recBy[s2.id]&&recBy[s2.id][it.k])});return free.length?(free.every(function(s2){return ui.chosen[s2.id]&&ui.chosen[s2.id][it.k]})?' checked':''):' disabled'})()+'></label><span class="key">'+esc(it.k)+'</span> '+esc(it.t)+'</div></td>'+here.map(function(s){
+      var rec=recBy[s.id]&&recBy[s.id][it.k];
+      if(rec){var rs=recStatus(rec);return '<td class="c"><span class="cellmini '+(rs==='entered'?'ent':(rs==='submitted'?'subm':'logged'))+'" title="'+(rs==='entered'?'In Scoutbook':(rs==='submitted'?'Submitted, awaiting approval':'Approved '+esc(fmtDate(rec.date))))+'">'+(rs==='entered'?'✓':(rs==='submitted'?'○':'●'))+'</span></td>'}
+      var on=ui.chosen[s.id]&&ui.chosen[s.id][it.k];
+      return '<td class="c"><input type="checkbox" class="cb'+(on?' on':'')+'" data-s="'+esc(s.id)+'" data-k="'+esc(it.k)+'"'+(on?' checked':'')+' aria-label="'+esc(s.name+' '+it.k)+'"></td>'}).join('')+'</tr>';
+  });
+  h+='</tbody></table></div>';
+  var nSel=0;Object.keys(ui.chosen).forEach(function(s){nSel+=Object.keys(ui.chosen[s]).length});
+  var nSc=Object.keys(ui.chosen).filter(function(s){return Object.keys(ui.chosen[s]).length}).length;
+  h+='<div class="bar"><div class="row3"><div><label class="f" for="sdate">Date</label><input type="date" id="sdate" value="'+esc(ui.date)+'"></div>'+
+    '<div><label class="f" for="sby">Signed off by</label><input type="text" id="sby" placeholder="Counselor / leader name" value="'+esc(cfg.leader||me.name||me.login)+'"></div>'+
+    '<div><label class="f" for="snote">Note (optional)</label><input type="text" id="snote" value="'+esc(ui.note)+'"></div>'+
+    '<button class="btn" id="saveBtn" data-act="save"'+(nSel?'':' disabled')+'>Save '+nSel+' sign-off'+(nSel===1?'':'s')+(nSc>1?' for '+nSc+' scouts':'')+'</button></div></div>';
+  el.innerHTML=h;
+}
+function updateSaveBtn(){
+  var nSel=0,nSc=0;Object.keys(ui.chosen).forEach(function(s){var c=Object.keys(ui.chosen[s]).length;nSel+=c;if(c)nSc++});
+  var b=$('#saveBtn');if(b){b.disabled=!nSel;b.textContent='Save '+nSel+' sign-off'+(nSel===1?'':'s')+(nSc>1?' for '+nSc+' scouts':'')}
+}
+
+// ---------- QUEUE TAB ----------
+function groupKey(r){return r.scoutId+'|'+r.badge}
+function renderQueue(){
+  var d=view();var el=$('#tab-queue');
+  var recs=d.records.filter(qmatch);
+  if(ui.qsearch){var q=ui.qsearch.toLowerCase();recs=recs.filter(function(r){return scoutName(d,r.scoutId).toLowerCase().indexOf(q)>-1||(REQ[r.badge]?REQ[r.badge].name:r.badge).toLowerCase().indexOf(q)>-1})}
+  var groups={},order=[];
+  recs.forEach(function(r){var g=groupKey(r);if(!groups[g]){groups[g]=[];order.push(g)}groups[g].push(r)});
+  order.sort(function(a,b){var ra=groups[a][0],rb=groups[b][0];return scoutName(d,ra.scoutId).localeCompare(scoutName(d,rb.scoutId))||a.localeCompare(b)});
+  var w=waitingCount(d),ADM=isAdmin();
+  var h='<div class="toolbar"><div class="seg" id="qseg"><button data-q="approve" class="'+(ui.qfilter==='approve'?'active':'')+'">Needs approval'+(needsApproval(d)?' ('+needsApproval(d)+')':'')+'</button><button data-q="waiting" class="'+(ui.qfilter==='waiting'?'active':'')+'">Approved, waiting for Scoutbook</button><button data-q="entered" class="'+(ui.qfilter==='entered'?'active':'')+'">Entered</button><button data-q="all" class="'+(ui.qfilter==='all'?'active':'')+'">All</button></div>'+
+    '<input type="search" id="qsearch" placeholder="Search scout or badge…" value="'+esc(ui.qsearch)+'" style="max-width:240px"><span class="sp"></span>'+
+    '<button class="btn sec small" data-act="copyall">Copy list</button><button class="btn small" data-act="xlsx">Download spreadsheet</button><button class="btn sec small" data-act="csv">CSV</button></div>';
+  if(!order.length){h+='<div class="card muted">'+(ui.qfilter==='approve'?'Nothing needs approval.':(ui.qfilter==='waiting'?'Nothing is waiting for Scoutbook.':'No entries to show.'))+'</div>';el.innerHTML=h;return}
+  var lastScout=null;
+  order.forEach(function(g){
+    var rs=groups[g],r0=rs[0],B=REQ[r0.badge]||{name:r0.badge,items:[]};
+    var idx={};B.items.forEach(function(it,i){if(it.k)idx[it.k]=i});
+    rs.sort(function(a,b){return (idx[a.key]==null?9e4:idx[a.key])-(idx[b.key]==null?9e4:idx[b.key])});
+    var wait=rs.filter(function(r){return recStatus(r)==='approved'}).length,sub=rs.filter(function(r){return recStatus(r)==='submitted'}).length;
+    h+='<div class="card grp"><div class="gh"><h3>'+esc(scoutName(d,r0.scoutId))+' <span class="muted">· Troop '+esc(scoutTroop(d,r0.scoutId))+'</span><br><span style="color:var(--blue)">'+esc(B.name)+'</span> <span class="muted">· '+(sub?sub+' to approve':'')+(sub&&wait?', ':'')+(wait?wait+' waiting for Scoutbook':'')+'</span></h3><div>'+
+      (ADM&&sub?'<button class="btn small" style="background:#E8890C" data-act="apprgrp" data-g="'+esc(g)+'">Approve all</button> ':'')+(ADM&&wait?'<button class="btn small" data-act="entergrp" data-g="'+esc(g)+'">Mark all entered</button> ':'')+'<button class="btn sec small" data-act="copygrp" data-g="'+esc(g)+'">Copy</button></div></div>';
+    rs.forEach(function(r){
+      var it=B.items[idx[r.key]];
+      var rst=recStatus(r),mine=me.login&&r.login&&r.login.toLowerCase()===me.login.toLowerCase();
+      var lead=rst==='submitted'?(ADM?'<button class="btn small" style="background:#E8890C;flex:none" data-act="appr" data-id="'+esc(r.id)+'">Approve</button>':'<span class="tag pend" style="flex:none">Awaiting approval</span>'):'<input type="checkbox" style="width:22px;height:22px;accent-color:var(--green);flex:none" data-act="toggle" data-id="'+esc(r.id)+'" '+(r.entered?'checked':'')+(ADM?'':' disabled')+' title="Entered in Scoutbook">';
+      h+='<div class="qrow'+(r.entered?' entered':'')+'">'+lead+'<span class="key req" style="padding:2px 8px;border:1px solid var(--blue-border);border-radius:6px;background:var(--blue-soft);color:var(--blue);font-weight:700;font-size:.8rem;white-space:nowrap">'+esc(r.key)+'</span><div class="grow"><div class="snip">'+esc(it?it.t:'')+'</div><div class="meta">Signed '+esc(fmtDate(r.date))+(r.by?' by '+esc(r.by):'')+(r.approvedBy&&rst!=='submitted'?' · approved by '+esc(r.approvedBy):'')+(r.note?' · '+esc(r.note):'')+(r.entered?' · entered '+esc(fmtDate((r.enteredAt||'').slice(0,10))):'')+'</div></div>'+((ADM||(mine&&rst==='submitted'))?'<button class="x" data-act="del" data-id="'+esc(r.id)+'" title="'+(rst==='submitted'?'Reject / remove this submission':'Remove this entry (logged by mistake)')+'">&times;</button>':'')+'</div>';
+    });
+    h+='</div>';
+  });
+  el.innerHTML=h;
+}
+function groupText(d,rs){
+  var r0=rs[0],B=REQ[r0.badge]||{name:r0.badge,items:[]};
+  var idx={};B.items.forEach(function(it,i){if(it.k)idx[it.k]=i});
+  rs=rs.slice().sort(function(a,b){return (idx[a.key]==null?9e4:idx[a.key])-(idx[b.key]==null?9e4:idx[b.key])});
+  return scoutName(d,r0.scoutId)+' — '+B.name+': '+rs.map(function(r){return r.key}).join(', ');
+}
+function queueGroups(d,onlyWaiting){
+  var g={};d.records.filter(function(r){return onlyWaiting?qmatch(r):true}).forEach(function(r){(g[groupKey(r)]=g[groupKey(r)]||[]).push(r)});return g;
+}
+function copy(text,msg){
+  if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(text).then(function(){toast(msg||'Copied')},function(){fallbackCopy(text,msg)})}else fallbackCopy(text,msg);
+}
+function fallbackCopy(text,msg){var t=document.createElement('textarea');t.value=text;document.body.appendChild(t);t.select();try{document.execCommand('copy');toast(msg||'Copied')}catch(e){toast('Copy failed')}t.remove()}
+function csvCell(v){v=String(v==null?'':v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
+function exportData(){
+  var d=view();
+  var recs=d.records.filter(qmatch);
+  var order=function(B,k){var i=-1;B.items.forEach(function(it,x){if(it.k===k)i=x});return i<0?9e4:i};
+  recs.sort(function(a,b){var Ba=REQ[a.badge]||{name:a.badge,items:[]},Bb=REQ[b.badge]||{name:b.badge,items:[]};return scoutName(d,a.scoutId).localeCompare(scoutName(d,b.scoutId))||Ba.name.localeCompare(Bb.name)||order(Ba,a.key)-order(Bb,b.key)});
+  var detail=[['Scout','Troop','Scoutbook member ID','Merit badge','Requirement','Requirement text','Date signed','Signed by','Note','Status','Entered date']];
+  var groups={},gorder=[];
+  recs.forEach(function(r){
+    var B=REQ[r.badge]||{name:r.badge,items:[]};var it=B.items.filter(function(i){return i.k===r.key})[0];
+    detail.push([scoutName(d,r.scoutId),scoutTroop(d,r.scoutId),/^x/.test(r.scoutId)?'':r.scoutId,B.name,r.key,it?it.t:'',r.date,r.by||'',r.note||'',({entered:'Entered in Scoutbook',submitted:'Needs approval',approved:'Approved, waiting for Scoutbook'})[recStatus(r)],r.enteredAt?r.enteredAt.slice(0,10):'']);
+    var g=r.scoutId+'|'+r.badge;if(!groups[g]){groups[g]=[];gorder.push(g)}groups[g].push(r);
+  });
+  var summary=[['Scout','Troop','Scoutbook member ID','Merit badge','Requirements to enter','How many','Date(s) signed','Signed by','Status']];
+  gorder.forEach(function(g){
+    var rs=groups[g],r0=rs[0],B=REQ[r0.badge]||{name:r0.badge};
+    var dates=[],bys=[];rs.forEach(function(r){if(r.date&&dates.indexOf(fmtDate(r.date))<0)dates.push(fmtDate(r.date));if(r.by&&bys.indexOf(r.by)<0)bys.push(r.by)});
+    var st={};rs.forEach(function(r){var x=recStatus(r);st[x]=(st[x]||0)+1});var stt=Object.keys(st).map(function(k){return (Object.keys(st).length>1?st[k]+' ':'')+({entered:'entered',submitted:'needs approval',approved:'approved, waiting'})[k]}).join(', ');
+    summary.push([scoutName(d,r0.scoutId),scoutTroop(d,r0.scoutId),/^x/.test(r0.scoutId)?'':r0.scoutId,B.name,rs.map(function(r){return r.key}).join(', '),rs.length,dates.join('; '),bys.join('; '),stt.charAt(0).toUpperCase()+stt.slice(1)]);
+  });
+  return {summary:summary,detail:detail};
+}
+function saveBlob(blob,name){var a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(a.href)},4000)}
+function downloadCsv(){var x=exportData();saveBlob(new Blob([x.summary.map(function(r){return r.map(csvCell).join(',')}).join('\r\n')],{type:'text/csv'}),'merit-badge-signoffs-'+today()+'.csv')}
+// minimal .xlsx writer (stored zip, inline strings)
+var CRCT=(function(){var t=[];for(var n=0;n<256;n++){var c=n;for(var k=0;k<8;k++)c=c&1?0xEDB88320^(c>>>1):c>>>1;t[n]=c>>>0}return t})();
+function crc32(u){var c=0xFFFFFFFF;for(var i=0;i<u.length;i++)c=CRCT[(c^u[i])&255]^(c>>>8);return (c^0xFFFFFFFF)>>>0}
+function zipStore(files){
+  var enc=new TextEncoder(),parts=[],cd=[],off=0;
+  function u16(v){return [v&255,(v>>>8)&255]}function u32(v){return [v&255,(v>>>8)&255,(v>>>16)&255,(v>>>24)&255]}
+  files.forEach(function(f){
+    var nm=enc.encode(f.name),data=enc.encode(f.data),crc=crc32(data);
+    var lh=[].concat([0x50,0x4b,3,4],u16(20),u16(0x0800),u16(0),u16(0),u16(0x21),u32(crc),u32(data.length),u32(data.length),u16(nm.length),u16(0));
+    parts.push(new Uint8Array(lh),nm,data);
+    cd.push({nm:nm,crc:crc,len:data.length,off:off});off+=lh.length+nm.length+data.length;
+  });
+  var cdStart=off,cdLen=0;
+  cd.forEach(function(c){var h=[].concat([0x50,0x4b,1,2],u16(20),u16(20),u16(0x0800),u16(0),u16(0),u16(0x21),u32(c.crc),u32(c.len),u32(c.len),u16(c.nm.length),u16(0),u16(0),u16(0),u16(0),u32(0),u32(c.off));parts.push(new Uint8Array(h),c.nm);cdLen+=h.length+c.nm.length});
+  parts.push(new Uint8Array([].concat([0x50,0x4b,5,6],u16(0),u16(0),u16(cd.length),u16(cd.length),u32(cdLen),u32(cdStart),u16(0))));
+  return new Blob(parts,{type:'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'});
+}
+function colL(i){var s='';i++;while(i>0){var m=(i-1)%26;s=String.fromCharCode(65+m)+s;i=Math.floor((i-1)/26)}return s}
+function xesc(v){return String(v==null?'':v).replace(/[&<>]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;'}[c]}).replace(/[\u0000-\u0008\u000B\u000C\u000E-\u001F]/g,'')}
+function sheetXml(rows,widths){
+  var x='<?xml version="1.0" encoding="UTF-8" standalone="yes"?><worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><sheetViews><sheetView workbookViewId="0"><pane ySplit="1" topLeftCell="A2" activePane="bottomLeft" state="frozen"/></sheetView></sheetViews><cols>'+widths.map(function(w,i){return '<col min="'+(i+1)+'" max="'+(i+1)+'" width="'+w+'" customWidth="1"/>'}).join('')+'</cols><sheetData>';
+  rows.forEach(function(r,ri){x+='<row r="'+(ri+1)+'">'+r.map(function(v,ci){var ref=colL(ci)+(ri+1);var st=ri===0?' s="1"':'';if(typeof v==='number'&&ri>0)return '<c r="'+ref+'"'+st+'><v>'+v+'</v></c>';return '<c r="'+ref+'" t="inlineStr"'+st+'><is><t xml:space="preserve">'+xesc(v)+'</t></is></c>'}).join('')+'</row>'});
+  return x+'</sheetData></worksheet>';
+}
+function downloadXlsx(){
+  var x=exportData();
+  var files=[
+   {name:'[Content_Types].xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/worksheets/sheet2.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/></Types>'},
+   {name:'_rels/.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/></Relationships>'},
+   {name:'xl/workbook.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="To enter in Scoutbook" sheetId="1" r:id="rId1"/><sheet name="Detail by requirement" sheetId="2" r:id="rId2"/></sheets></workbook>'},
+   {name:'xl/_rels/workbook.xml.rels',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet2.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'},
+   {name:'xl/styles.xml',data:'<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="2"><font><sz val="11"/><name val="Calibri"/></font><font><b/><sz val="11"/><name val="Calibri"/></font></fonts><fills count="3"><fill><patternFill patternType="none"/></fill><fill><patternFill patternType="gray125"/></fill><fill><patternFill patternType="solid"><fgColor rgb="FFEAF2FA"/></patternFill></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="2"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/><xf numFmtId="0" fontId="1" fillId="2" borderId="0" xfId="0" applyFont="1" applyFill="1"/></cellXfs></styleSheet>'},
+   {name:'xl/worksheets/sheet1.xml',data:sheetXml(x.summary,[22,8,20,30,48,10,18,22,12])},
+   {name:'xl/worksheets/sheet2.xml',data:sheetXml(x.detail,[22,8,20,30,12,70,14,20,24,12,14])}];
+  saveBlob(zipStore(files),'merit-badge-signoffs-'+today()+'.xlsx');
+}
+
+// ---------- SETTINGS TAB ----------
+function renderSettings(){
+  var d=view();var el=$('#tab-settings');
+  var sorted=d.scouts.slice().sort(function(a,b){return (a.troop===b.troop?0:(a.troop<b.troop?-1:1))||a.name.localeCompare(b.name)});
+  var h='<div class="card"><h2 style="margin:0 0 8px;font-size:1.1rem">Leader access (this device only)</h2>'+(cfg.token?'<p style="margin:0 0 10px"><b>'+(me.login?'Signed in as '+esc(me.name||me.login)+' ('+esc(me.login)+')':'Checking token…')+'</b> &middot; '+(isAdmin()?'<span class="tag ent">Admin: can approve</span>':'<span class="tag pend">Leader: submissions need approval</span>')+(adminsEmpty()&&me.login?' <button class="btn small" data-act="claimadmin">Make me the admin</button>':'')+'</p>':'')+
+    '<p class="hint" style="margin-top:0">Viewing is open. To save sign-offs you need a GitHub token with access to this repository. It is stored only in this browser.</p>'+
+    '<div class="row" style="margin-top:10px"><div><label class="f" for="cOwner">GitHub user / org</label><input type="text" id="cOwner" value="'+esc(cfg.owner)+'"></div>'+
+    '<div><label class="f" for="cRepo">Repository</label><input type="text" id="cRepo" value="'+esc(cfg.repo)+'"></div>'+
+    '<div><label class="f" for="cBranch">Branch</label><input type="text" id="cBranch" value="'+esc(cfg.branch)+'"></div>'+
+    '<div><label class="f" for="cLeader">Your name (default for &ldquo;Signed off by&rdquo;)</label><input type="text" id="cLeader" value="'+esc(cfg.leader)+'"></div></div>'+
+    '<div style="margin-top:12px"><label class="f" for="cToken">Personal access token</label><input type="password" id="cToken" autocomplete="off" placeholder="'+(cfg.token?'Saved on this device — paste a new one to replace':'github_pat_…')+'"></div>'+
+    '<p class="hint">Create it at GitHub &rarr; Settings &rarr; Developer settings &rarr; Fine-grained tokens. Limit it to this one repository with <b>Contents: Read and write</b>.</p>'+
+    '<div style="margin-top:12px;display:flex;gap:8px;flex-wrap:wrap"><button class="btn" data-act="savecfg">Save &amp; connect</button>'+(cfg.token?'<button class="btn sec" data-act="forget">Remove token from this device</button>':'')+'</div></div>';
+  h+='<div class="card"><h2 style="margin:0 0 8px;font-size:1.1rem">Scout roster</h2><p class="hint" style="margin-top:0">Add scouts who are new or missing. Any leader can add a scout. Only the admin can remove one (this hides them from the pick list; logged sign-offs stay in the queue).</p>'+
+    '<div class="row" style="margin:10px 0"><div><label class="f" for="nName">Name</label><input type="text" id="nName" placeholder="First Last"></div>'+
+    '<div><label class="f" for="nTroop">Troop</label><select id="nTroop"><option>533</option><option>1533</option></select></div>'+
+    '<div><label class="f" for="nId">Scoutbook member ID (optional)</label><input type="text" id="nId"></div><div style="align-self:end"><button class="btn" data-act="addscout"'+(cfg.token?'':' disabled')+'>Add scout</button></div></div>'+
+    '<table class="rost">'+sorted.map(function(s){return '<tr><td>'+esc(s.name)+'</td><td class="muted">Troop '+esc(s.troop)+'</td><td style="text-align:right">'+(isAdmin()?'<button class="btn sec small" data-act="rmscout" data-id="'+esc(s.id)+'">Remove</button>':'')+'</td></tr>'}).join('')+'</table></div>';
+  el.innerHTML=h;
+}
+
+// ---------- render / events ----------
+function render(){
+  document.querySelectorAll('#tabs button').forEach(function(b){b.classList.toggle('active',b.dataset.tab===ui.tab)});
+  ['sign','queue','settings'].forEach(function(t){$('#tab-'+t).hidden=ui.tab!==t});
+  var vv=view();var w=isAdmin()?needsApproval(vv):0;var qc=$('#qcount');qc.textContent=w;qc.hidden=!w;qc.title='Submissions awaiting your approval';
+  var ae=document.activeElement;var keep=ae&&ae.id&&['badgeFilter','qsearch','snote','sby','cOwner','cRepo','cBranch','cLeader','cToken','nName','nId','addFirst','addLast','addId'].indexOf(ae.id)>-1?{id:ae.id,s:ae.selectionStart}:null;
+  if(ui.tab==='sign')renderSign();else if(ui.tab==='queue')renderQueue();else renderSettings();
+  if(keep){var n=document.getElementById(keep.id);if(n){n.focus();try{n.setSelectionRange(keep.s,keep.s)}catch(e){}}}
+}
+document.addEventListener('click',function(e){
+  var tb=e.target.closest('#tabs button');if(tb){ui.tab=tb.dataset.tab;render();window.scrollTo(0,0);return}
+  var q=e.target.closest('#qseg button');if(q){ui.qfilter=q.dataset.q;render();return}
+  var a=e.target.closest('[data-act]');if(!a)return;
+  var act=a.dataset.act,d=view();
+  if(a.tagName==='INPUT')return;
+  if(act==='retry'){flush();load();}
+  else if(act==='here'){var sid=a.dataset.id;if(ui.here[sid]){delete ui.here[sid];delete ui.chosen[sid]}else ui.here[sid]=1;lsSet('mbs_here',ui.here);render()}
+  else if(act==='here-clear'){ui.here={};ui.chosen={};lsSet('mbs_here',ui.here);render()}
+  else if(act==='here-working'){d.records.forEach(function(r){if(r.badge===ui.badge&&d.scouts.some(function(s){return s.id===r.scoutId}))ui.here[r.scoutId]=1});lsSet('mbs_here',ui.here);render()}
+  else if(act==='save'){
+    var by=($('#sby').value||'').trim()||me.name||me.login,date=$('#sdate').value||today(),note=($('#snote').value||'').trim();
+    if(!cfg.token){toast('Add your token in Settings first');return}
+    if(by){cfg.leader=by;saveCfg()}
+    var recs=[];Object.keys(ui.chosen).forEach(function(sid){Object.keys(ui.chosen[sid]).forEach(function(k){recs.push({id:recId(sid,ui.badge,k),scoutId:sid,badge:ui.badge,key:k,date:date,by:by,login:me.login||'',status:isAdmin()?'approved':'submitted',note:note,at:new Date().toISOString(),entered:false,enteredAt:null})})});
+    if(!recs.length)return;
+    var n=recs.length;ui.chosen={};ui.note='';queueOp({t:'add',recs:recs});toast(n+' sign-off'+(n>1?'s':'')+(isAdmin()?' saved for the Scoutbook queue':' submitted for approval'));
+  }
+  else if(act==='del'){if(confirm('Remove this entry? Use this only if it was logged by mistake.'))queueOp({t:'del',ids:[a.dataset.id]})}
+  else if(act==='entergrp'){if(!isAdmin())return;var g=(queueGroups(d,false)[a.dataset.g]||[]).filter(function(r){return recStatus(r)==='approved'});queueOp({t:'ent',ids:g.map(function(r){return r.id}),v:true,at:new Date().toISOString()})}
+  else if(act==='apprgrp'){if(!isAdmin())return;var g2=(queueGroups(d,false)[a.dataset.g]||[]).filter(function(r){return recStatus(r)==='submitted'});queueOp({t:'appr',ids:g2.map(function(r){return r.id}),by:me.name||me.login,at:new Date().toISOString()});toast(g2.length+' approved')}
+  else if(act==='appr'){if(!isAdmin())return;queueOp({t:'appr',ids:[a.dataset.id],by:me.name||me.login,at:new Date().toISOString()})}
+  else if(act==='claimadmin'){if(me.login)queueOp({t:'admin+',login:me.login});else toast('Add your token first')}
+  else if(act==='copygrp'){var gs=queueGroups(d,ui.qfilter==='waiting')[a.dataset.g];if(gs)copy(groupText(d,gs),'Copied')}
+  else if(act==='copyall'){var G=queueGroups(d,ui.qfilter==='waiting'),lines=Object.keys(G).map(function(g){return groupText(d,G[g])}).sort();copy(lines.join('\n'),'Copied '+lines.length+' line'+(lines.length===1?'':'s'))}
+  else if(act==='csv')downloadCsv();
+  else if(act==='xlsx')downloadXlsx();
+  else if(act==='savecfg'){
+    cfg.owner=$('#cOwner').value.trim();cfg.repo=$('#cRepo').value.trim();cfg.branch=$('#cBranch').value.trim()||'main';cfg.leader=$('#cLeader').value.trim();
+    var t=$('#cToken').value.trim();if(t)cfg.token=t;saveCfg();toast('Saved. Connecting…');load();
+  }
+  else if(act==='forget'){cfg.token='';saveCfg();toast('Token removed');load()}
+  else if(act==='addopen'){ui.addOpen=true;render();var f=$('#addFirst');if(f)f.focus()}
+  else if(act==='addclose'){ui.addOpen=false;render()}
+  else if(act==='addsave'){
+    var nm2=($('#addFirst').value+' '+$('#addLast').value),r=addScout(nm2,$('#addTroop').value,$('#addId').value);
+    if(r.err){toast(r.err);return}
+    if(r.dup){ui.here[r.dup.id]=1;lsSet('mbs_here',ui.here);ui.addOpen=false;render();toast(r.dup.name+' is already on the roster, marked as here');return}
+    ui.here[r.ok.id]=1;lsSet('mbs_here',ui.here);ui.addOpen=false;render();toast(r.ok.name+' added');
+  }
+  else if(act==='addscout'){
+    var nm=$('#nName').value.trim(),r2=addScout(nm,$('#nTroop').value,$('#nId').value);
+    if(r2.err)toast(r2.err);else if(r2.dup)toast(r2.dup.name+' is already on the roster');else{toast(nm+' added');$('#nName').value='';$('#nId').value=''}
+  }
+  else if(act==='rmscout'){if(!isAdmin())return;if(confirm('Remove '+scoutName(d,a.dataset.id)+' from the pick list?'))queueOp({t:'scout-',id:a.dataset.id})}
+});
+document.addEventListener('change',function(e){
+  var t=e.target;
+  if(t.id==='selBadge'){ui.badge=t.value;ui.chosen={};lsSet('mbs_badge',ui.badge);render()}
+  else if(t.id==='sdate')ui.date=t.value;
+  else if(t.dataset&&t.dataset.rowall){var k=t.dataset.rowall,on=t.checked;document.querySelectorAll('input.cb').forEach(function(c){if(c.dataset.k!==k)return;var sid=c.dataset.s;ui.chosen[sid]=ui.chosen[sid]||{};if(on)ui.chosen[sid][k]=1;else delete ui.chosen[sid][k]});render()}
+  else if(t.classList&&t.classList.contains('cb')){var sid2=t.dataset.s,k2=t.dataset.k;ui.chosen[sid2]=ui.chosen[sid2]||{};if(t.checked)ui.chosen[sid2][k2]=1;else delete ui.chosen[sid2][k2];render()}
+  else if(t.dataset&&t.dataset.act==='toggle'){if(!isAdmin()){render();return}queueOp({t:'ent',ids:[t.dataset.id],v:t.checked,at:new Date().toISOString()})}
+});
+document.addEventListener('input',function(e){
+  var t=e.target;
+  if(t.id==='badgeFilter'){ui.badgeFilter=t.value;var sel=$('#selBadge');var bl=badgeList().filter(function(b){return !ui.badgeFilter||b.name.toLowerCase().indexOf(ui.badgeFilter.toLowerCase())>-1});sel.innerHTML='<option value="">Choose a merit badge…</option>'+bl.map(function(b){return '<option value="'+esc(b.slug)+'"'+(ui.badge===b.slug?' selected':'')+'>'+esc(b.name)+'</option>'}).join('')}
+  else if(t.id==='qsearch'){ui.qsearch=t.value;render()}
+  else if(t.id==='snote')ui.note=t.value;
+});
+
+// ---------- boot ----------
+(async function(){
+  try{var r=await fetch('data/requirements.json');REQ=await r.json()}catch(e){$('#banner').innerHTML='<div class="banner warn">Could not load data/requirements.json.</div>'}
+  render();await load();
+})();
+})();
+</script>
+</body>
+</html>
